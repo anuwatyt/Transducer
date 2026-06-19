@@ -1,18 +1,25 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#define LED_PIN     13    // Built-in LED (D13)
+#define BLINK_MS    500   // กระพริบทุก 500 ms
+
+unsigned long prevTime = 0;
+bool ledState = LOW;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    Serial.begin(9600);
+    pinMode(LED_PIN, OUTPUT);
+    Serial.println("Blink Test Start");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+    unsigned long now = millis();
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    if (now - prevTime >= BLINK_MS) {
+        prevTime = now;
+        ledState = !ledState;
+        digitalWrite(LED_PIN, ledState);
+        Serial.print("LED: ");
+        Serial.println(ledState ? "ON" : "OFF");
+    }
 }
