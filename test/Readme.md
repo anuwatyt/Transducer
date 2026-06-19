@@ -1,194 +1,180 @@
 # รหัส 000000000 นาย อนุวัฒน์ สุชาโต
-## แผนกเทคนิคคอมพิวเตอร์ 
+## แผนกเทคนิคคอมพิวเตอร์
 
-# ความรู้เบื้องต้นเกี่ยวกับเซ็นเซอร์ (Sensor Fundamentals)
+# LAB03 DHT11
 
-## 1. เซ็นเซอร์คืออะไร?
+---
 
-เซ็นเซอร์ (Sensor) คืออุปกรณ์ที่ตรวจจับหรือวัดปริมาณทางกายภาพจากสิ่งแวดล้อม แล้วแปลงเป็นสัญญาณไฟฟ้าที่ระบบประมวลผลสามารถอ่านได้
+## 1. DHT11 คืออะไร?
+
+![DHT11 Sensor](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/DHT11_Sensor.jpg/220px-DHT11_Sensor.jpg)
+
+DHT11 เป็นเซ็นเซอร์วัด **อุณหภูมิ** และ **ความชื้น** ในชิปเดียว ส่งข้อมูลผ่านสายสัญญาณเพียง 1 เส้น (Single-wire / 1-Wire Protocol)
+
+---
+
+## 2. ข้อมูลจำเพาะ (Specifications)
+
+| พารามิเตอร์ | ค่า |
+|------------|-----|
+| แรงดันไฟเลี้ยง (VCC) | 3.3V – 5V DC |
+| ย่านวัดอุณหภูมิ | 0 – 50 °C |
+| ความแม่นยำอุณหภูมิ | ± 2 °C |
+| ย่านวัดความชื้น (RH) | 20 – 90 % RH |
+| ความแม่นยำความชื้น | ± 5 % RH |
+| อินเทอร์เฟซ | Digital 1-Wire |
+| อัตราการส่งข้อมูล | สูงสุด 1 ครั้ง / วินาที |
+| กระแสใช้งาน | 0.3 mA (วัด), 60 µA (standby) |
+| จำนวนขา | 4 ขา (VCC, Data, NC, GND) |
+
+---
+
+## 3. ขาของ DHT11
 
 ```
-Physical Quantity → [Sensor] → Electrical Signal → [Microcontroller] → Output
+      DHT11
+   ┌─────────┐
+   │  ○ ○ ○ ○│
+   └─────────┘
+     │ │ │ │
+     1 2 3 4
+
+ขา 1 = VCC   → ไฟเลี้ยง 3.3V – 5V
+ขา 2 = DATA  → สัญญาณข้อมูล (ต่อ Pull-up 10kΩ ถึง VCC)
+ขา 3 = NC    → ไม่ใช้งาน (No Connect)
+ขา 4 = GND   → กราวด์
 ```
 
 ---
 
-## 2. ประเภทของสัญญาณเซ็นเซอร์
+## 4. การต่อวงจรกับ Arduino UNO
 
-| ประเภท | คำอธิบาย | ตัวอย่าง |
-|--------|-----------|----------|
-| **Analog** | สัญญาณต่อเนื่อง (0–5V, 0–3.3V) | เทอร์มิสเตอร์, LDR, Potentiometer |
-| **Digital** | สัญญาณ HIGH/LOW (0 หรือ 1) | PIR, สวิตช์, Hall Effect |
-| **PWM** | สัญญาณพัลส์ความถี่คงที่ | Servo feedback, บางเซ็นเซอร์วัดระยะ |
-| **Protocol** | สื่อสารผ่านโปรโตคอล | DHT22 (1-Wire), BMP280 (I2C), MAX6675 (SPI) |
+| DHT11 | Arduino UNO |
+|-------|------------|
+| VCC (ขา 1) | 5V |
+| DATA (ขา 2) | D2 (+ R 10kΩ pull-up ถึง 5V) |
+| NC (ขา 3) | — |
+| GND (ขา 4) | GND |
 
----
-
-## 3. เซ็นเซอร์ที่พบบ่อยในงาน Embedded
-
-### 3.1 เซ็นเซอร์อุณหภูมิ
-
-| เซ็นเซอร์ | อินเทอร์เฟซ | ย่านวัด | ข้อดี |
-|----------|------------|---------|-------|
-| LM35 | Analog | -55 ถึง 150°C | ราคาถูก ใช้งานง่าย |
-| DHT11 | Digital 1-Wire | 0–50°C | มี Humidity ในตัว |
-| DHT22 | Digital 1-Wire | -40 ถึง 80°C | แม่นยำกว่า DHT11 |
-| DS18B20 | 1-Wire Protocol | -55 ถึง 125°C | ต่อได้หลายตัวบนสายเดียว |
-| PT100/PT1000 | Analog (ต้องการ amplifier) | -200 ถึง 850°C | แม่นยำสูง ใช้งานอุตสาหกรรม |
-| Thermocouple K | SPI (MAX6675/MAX31855) | -200 ถึง 1350°C | วัดอุณหภูมิสูงมาก |
-
-### 3.2 เซ็นเซอร์ความดัน
-
-| เซ็นเซอร์ | อินเทอร์เฟซ | การใช้งาน |
-|----------|------------|----------|
-| BMP180 | I2C | ความดันบรรยากาศ, ระดับความสูง |
-| BMP280 | I2C/SPI | แม่นยำกว่า BMP180 |
-| MPX5010 | Analog | วัดความดันน้ำ/ก๊าซ |
-
-### 3.3 เซ็นเซอร์ระยะทาง
-
-| เซ็นเซอร์ | หลักการ | ย่านวัด |
-|----------|---------|---------|
-| HC-SR04 | Ultrasonic | 2–400 cm |
-| VL53L0X | Laser ToF (I2C) | 3–200 cm |
-| IR Sharp GP2Y0A21 | Infrared Analog | 10–80 cm |
-
-### 3.4 เซ็นเซอร์ความชื้น
-
-- **DHT11 / DHT22** — วัดความชื้นสัมพัทธ์ (RH) และอุณหภูมิในชิปเดียว
-- **HIH6130** — I2C, แม่นยำสูง
-
-### 3.5 เซ็นเซอร์แสง
-
-| เซ็นเซอร์ | ประเภท | หมายเหตุ |
-|----------|--------|---------|
-| LDR (GL5516) | Analog Resistive | ค่าต้านทานแปรตามแสง |
-| BH1750 | I2C (lux) | วัดค่าความสว่างเป็น lux |
-| VEML6070 | I2C (UV) | วัดรังสี UV |
-| TSL2561 | I2C | ใกล้เคียงการมองเห็นของมนุษย์ |
-
----
-
-## 4. โปรโตคอลการสื่อสารของเซ็นเซอร์
-
-### I2C (Inter-Integrated Circuit)
-- สายสัญญาณ: **SDA** (Data) + **SCL** (Clock)
-- ต่อได้หลายอุปกรณ์บนบัสเดียว (แต่ละตัวมี address ไม่ซ้ำกัน)
-- ความเร็ว: 100 kHz (Standard), 400 kHz (Fast)
+### แบบร่างวงจร
 
 ```
-MCU ──SDA──┬── Sensor A (0x40)
-           ├── Sensor B (0x76)
-    ──SCL──┘
-```
-
-### SPI (Serial Peripheral Interface)
-- สายสัญญาณ: **MOSI**, **MISO**, **SCK**, **CS**
-- ความเร็วสูงกว่า I2C, แต่ใช้สายมากกว่า
-- ใช้บ่อยกับ: MAX6675, MAX31855, ADXL345
-
-### UART (Universal Asynchronous Receiver-Transmitter)
-- สายสัญญาณ: **TX**, **RX**
-- ใช้กับ: GPS module, Bluetooth HC-05, เซ็นเซอร์ PM2.5
-
-### 1-Wire
-- ใช้สายเดียว (Data) ต่อหลายอุปกรณ์
-- ใช้กับ: DS18B20 (อุณหภูมิ)
-
----
-
-## 5. วงจรพื้นฐาน: Voltage Divider สำหรับ Analog Sensor
-
-เซ็นเซอร์แบบ Resistive (LDR, Thermistor, PT100) ต้องใช้ Voltage Divider เพื่อแปลงค่าต้านทานเป็นแรงดัน
-
-```
-VCC (3.3V หรือ 5V)
-  │
-  R_fixed (ตัวต้านทานคงที่)
-  │
-  ├──── ADC Pin (อ่านค่าแรงดัน)
-  │
-  R_sensor (เซ็นเซอร์)
-  │
-GND
-```
-
-สูตร:
-```
-V_out = VCC × R_sensor / (R_fixed + R_sensor)
+Arduino UNO
+┌─────────────┐          10kΩ
+│          5V ├──────────┬──/\/\/──── VCC (ขา 1)
+│             │          │
+│          D2 ├──────────┤─────────── DATA (ขา 2)
+│             │                       NC  (ขา 3) ── ไม่ต่อ
+│         GND ├───────────────────── GND (ขา 4)
+└─────────────┘
 ```
 
 ---
 
-## 6. การแปลงค่า ADC เป็นค่าจริง
+## 5. หลักการทำงาน
 
-ไมโครคอนโทรลเลอร์อ่านค่า ADC เป็นตัวเลข เช่น 0–1023 (10-bit) หรือ 0–4095 (12-bit)
+DHT11 ส่งข้อมูล **40 บิต** ต่อการอ่าน 1 ครั้ง
 
-```cpp
-// ตัวอย่าง Arduino (10-bit ADC, VCC = 5V)
-int raw = analogRead(A0);           // 0 – 1023
-float voltage = raw * (5.0 / 1023.0);  // แปลงเป็นแรงดัน (V)
 ```
+[ 8 bit ความชื้น Integer ] [ 8 bit ความชื้น Decimal ]
+[ 8 bit อุณหภูมิ Integer ] [ 8 bit อุณหภูมิ Decimal ]
+[ 8 bit Checksum ]
 
-สำหรับ LM35 (10 mV/°C):
-```cpp
-float temperature = voltage * 100.0;  // 1V = 100°C
+Checksum = ผลรวมของ 4 ไบต์แรก (ตรวจสอบความถูกต้อง)
 ```
 
 ---
 
-## 7. ข้อควรระวังในการใช้งานเซ็นเซอร์
+## 6. Library ที่ใช้ (PlatformIO)
 
-| ปัญหา | สาเหตุ | วิธีแก้ |
-|-------|--------|---------|
-| ค่าอ่านสั่นไหว (Noisy) | สัญญาณรบกวน, ADC ไม่เสถียร | ใส่ capacitor bypass 100nF, ทำ averaging |
-| ค่าผิดพลาดจาก Offset | เซ็นเซอร์ไม่ผ่านการ calibrate | Calibration กับค่าอ้างอิง |
-| Pull-up/Pull-down | I2C/1-Wire ไม่มีแรงดันอ้างอิง | ต่อ pull-up resistor 4.7kΩ |
-| Logic Level Mismatch | เซ็นเซอร์ 5V ต่อกับ MCU 3.3V | ใช้ Logic Level Converter |
-| Warm-up Time | เซ็นเซอร์บางตัวต้องอุ่นเครื่อง | รอ delay ก่อนอ่านค่า |
+เพิ่มใน `platformio.ini` :
 
----
-
-## 8. Transducer vs Sensor
-
-| คำศัพท์ | ความหมาย |
-|--------|---------|
-| **Sensor** | ตรวจจับปริมาณทางกายภาพ → สัญญาณไฟฟ้า (อ่านอย่างเดียว) |
-| **Actuator** | สัญญาณไฟฟ้า → ปริมาณทางกายภาพ (ขับเคลื่อน) |
-| **Transducer** | คำรวม: อุปกรณ์ที่แปลงพลังงานจากรูปหนึ่งไปอีกรูปหนึ่ง (ครอบคลุมทั้ง Sensor และ Actuator) |
+```ini
+lib_deps =
+    adafruit/DHT sensor library @ ^1.4.6
+    adafruit/Adafruit Unified Sensor @ ^1.1.9
+```
 
 ---
 
-## 9. ตัวอย่างโค้ด PlatformIO (ESP32 + DHT22)
+## 7. โค้ดตัวอย่าง
 
 ```cpp
 #include <Arduino.h>
 #include <DHT.h>
 
-#define DHTPIN 4
-#define DHTTYPE DHT22
+#define DHTPIN  2       // DATA ต่อที่ D2
+#define DHTTYPE DHT11
 
 DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     dht.begin();
+    Serial.println("=== DHT11 Sensor ===");
 }
 
 void loop() {
     float humidity    = dht.readHumidity();
-    float temperature = dht.readTemperature();
+    float temperature = dht.readTemperature();  // หน่วย °C
 
     if (isnan(humidity) || isnan(temperature)) {
-        Serial.println("Failed to read from DHT sensor!");
+        Serial.println("ERROR: อ่านค่าไม่ได้!");
+        delay(2000);
         return;
     }
 
-    Serial.printf("Temp: %.1f°C  Humidity: %.1f%%\n", temperature, humidity);
-    delay(2000);
+    Serial.print("อุณหภูมิ : ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    Serial.print("ความชื้น : ");
+    Serial.print(humidity);
+    Serial.println(" %RH");
+
+    Serial.println("--------------------");
+    delay(2000);  // อ่านซ้ำทุก 2 วินาที (DHT11 รองรับสูงสุด 1 ครั้ง/วินาที)
 }
 ```
 
 ---
 
-*อ้างอิง: Datasheet DHT22, DS18B20, BMP280 | PlatformIO Documentation*
+## 8. ผลลัพธ์ Serial Monitor
+
+```
+=== DHT11 Sensor ===
+อุณหภูมิ : 28.00 °C
+ความชื้น : 65.00 %RH
+--------------------
+อุณหภูมิ : 28.00 °C
+ความชื้น : 65.00 %RH
+--------------------
+```
+
+---
+
+## 9. ข้อควรระวัง
+
+| ปัญหา | สาเหตุ / วิธีแก้ |
+|-------|----------------|
+| อ่านค่าไม่ได้ (NaN) | ลืมต่อ Pull-up 10kΩ หรือสายหลวม |
+| ค่าสั่นไหว | อ่านถี่เกินไป — ใช้ `delay(2000)` ขึ้นไป |
+| ความแม่นยำต่ำ | DHT11 มี error ±2°C / ±5%RH ถ้าต้องการแม่นยำกว่าให้ใช้ **DHT22** |
+| ย่านวัดจำกัด | DHT11 วัดได้แค่ 0–50°C ถ้าอยู่นอกช่วงนี้ค่าจะผิด |
+
+---
+
+## 10. เปรียบเทียบ DHT11 vs DHT22
+
+| คุณสมบัติ | DHT11 | DHT22 |
+|----------|-------|-------|
+| ราคา | ถูกกว่า | แพงกว่า |
+| ย่านอุณหภูมิ | 0 – 50 °C | -40 – 80 °C |
+| ความแม่นยำอุณหภูมิ | ± 2 °C | ± 0.5 °C |
+| ย่านความชื้น | 20 – 90 %RH | 0 – 100 %RH |
+| ความแม่นยำความชื้น | ± 5 %RH | ± 2 %RH |
+| อัตราการอ่าน | 1 ครั้ง/วินาที | 0.5 ครั้ง/วินาที |
+
+---
+
+*อ้างอิง: DHT11 Datasheet, Adafruit DHT Library*
