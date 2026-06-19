@@ -1,25 +1,42 @@
 #include <Arduino.h>
+#include <DHT.h>
 
-#define LED_PIN     13    // Built-in LED (D13)
-#define BLINK_MS    500   // กระพริบทุก 500 ms
+// DHT11: ขา DATA => D4 (PD4 — Digital I/O)
+// ต่อ Pull-up 10kΩ ระหว่างขา DATA กับ VCC
+#define DHTPIN   4
+#define DHTTYPE  DHT11
 
-unsigned long prevTime = 0;
-bool ledState = LOW;
+DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
     Serial.begin(9600);
-    pinMode(LED_PIN, OUTPUT);
-    Serial.println("Blink Test Start");
+    dht.begin();
+    Serial.println("============================");
+    Serial.println("   DHT11 Sensor - UNO R3   ");
+    Serial.println("   DATA => D4 (PD4)        ");
+    Serial.println("============================");
 }
 
 void loop() {
-    unsigned long now = millis();
+    // DHT11 รองรับการอ่านสูงสุด 1 ครั้ง/วินาที
+    delay(2000);
 
-    if (now - prevTime >= BLINK_MS) {
-        prevTime = now;
-        ledState = !ledState;
-        digitalWrite(LED_PIN, ledState);
-        Serial.print("LED: ");
-        Serial.println(ledState ? "ON" : "OFF");
+    float humidity    = dht.readHumidity();
+    float temperature = dht.readTemperature();  // หน่วย °C
+
+    if (isnan(humidity) || isnan(temperature)) {
+        Serial.println("ERROR: อ่านค่าจาก DHT11 ไม่ได้");
+        Serial.println(">> ตรวจสอบสาย DATA และ Pull-up 10kΩ");
+        return;
     }
+
+    Serial.print("อุณหภูมิ : ");
+    Serial.print(temperature, 1);
+    Serial.println(" °C");
+
+    Serial.print("ความชื้น : ");
+    Serial.print(humidity, 1);
+    Serial.println(" %RH");
+
+    Serial.println("----------------------------");
 }
