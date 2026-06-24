@@ -1,25 +1,36 @@
 #include <Arduino.h>
 
-#define LED_PIN     13    // Built-in LED (D13)
-#define BLINK_MS    500   // กระพริบทุก 500 ms
+#define REED_PIN   2
+#define LED_PIN    13
+#define BAUD_RATE  9600
+#define SAMPLE_MS  200
 
 unsigned long prevTime = 0;
-bool ledState = LOW;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(BAUD_RATE);
+    pinMode(REED_PIN, INPUT_PULLUP);
     pinMode(LED_PIN, OUTPUT);
-    Serial.println("Blink Test Start");
+    digitalWrite(LED_PIN, LOW);
+
+    Serial.println("KY-021 test started");
+    Serial.println("Use magnet near the sensor and watch Serial Monitor");
 }
 
 void loop() {
     unsigned long now = millis();
 
-    if (now - prevTime >= BLINK_MS) {
+    if (now - prevTime >= SAMPLE_MS) {
         prevTime = now;
-        ledState = !ledState;
-        digitalWrite(LED_PIN, ledState);
-        Serial.print("LED: ");
-        Serial.println(ledState ? "ON" : "OFF");
+
+        int state = digitalRead(REED_PIN);
+
+        if (state == LOW) {
+            digitalWrite(LED_PIN, HIGH);
+            Serial.println("Magnet detected");
+        } else {
+            digitalWrite(LED_PIN, LOW);
+            Serial.println("No magnet");
+        }
     }
 }
