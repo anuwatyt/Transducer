@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">KY-021 Magnetic Reed Switch Module Illustration</title>
+  <desc id="desc">A simple illustrated diagram showing a KY-021 reed switch sensor module, its pins, and a magnet approaching the switch.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f9d55"/>
+      <stop offset="100%" stop-color="#146c3d"/>
+    </linearGradient>
+    <linearGradient id="magnet" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="50%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; fill: #e2e8f0; }
+      .small { font-size: 24px; }
+      .medium { font-size: 30px; font-weight: 700; }
+      .large { font-size: 42px; font-weight: 700; }
+      .pin { fill: #d4a373; stroke: #8d5f2b; stroke-width: 2; }
+      .outline { stroke: #0f172a; stroke-width: 4; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#bg)"/>
+
+  <text x="70" y="80" class="label large">KY-021 Magnetic Reed Switch</text>
+  <text x="70" y="120" class="label small">Module for detecting a nearby magnet</text>
+
+  <!-- Sensor board -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="170" rx="28" ry="28" width="560" height="360" fill="url(#board)" stroke="#0f5132" stroke-width="6"/>
+    <rect x="168" y="208" rx="18" ry="18" width="484" height="284" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.15" stroke-width="3"/>
+  </g>
+
+  <!-- Pins -->
+  <g>
+    <rect class="pin" x="210" y="530" width="28" height="90" rx="8"/>
+    <rect class="pin" x="320" y="530" width="28" height="90" rx="8"/>
+    <rect class="pin" x="430" y="530" width="28" height="90" rx="8"/>
+    <text x="192" y="651" class="label small">VCC</text>
+    <text x="304" y="651" class="label small">GND</text>
+    <text x="418" y="651" class="label small">DO</text>
+  </g>
+
+  <!-- Reed switch capsule -->
+  <g>
+    <rect x="265" y="250" width="220" height="56" rx="28" fill="#cbd5e1" stroke="#475569" stroke-width="4"/>
+    <line x1="290" y1="278" x2="455" y2="278" class="outline"/>
+    <line x1="290" y1="268" x2="455" y2="288" class="outline"/>
+    <text x="265" y="235" class="label small">Reed switch</text>
+  </g>
+
+  <!-- Comparator / indicator area -->
+  <g>
+    <circle cx="232" cy="368" r="28" fill="#fbbf24" stroke="#a16207" stroke-width="4"/>
+    <circle cx="232" cy="368" r="10" fill="#fff7ed"/>
+    <text x="190" y="430" class="label small">LED</text>
+    <rect x="300" y="344" width="166" height="54" rx="10" fill="#e2e8f0" stroke="#475569" stroke-width="4"/>
+    <text x="321" y="378" class="label small" fill="#0f172a">OUT</text>
+  </g>
+
+  <!-- Magnet -->
+  <g filter="url(#shadow)">
+    <rect x="810" y="250" width="210" height="150" rx="24" fill="url(#magnet)" stroke="#0f172a" stroke-width="6"/>
+    <rect x="890" y="250" width="50" height="150" fill="#f8fafc"/>
+    <text x="845" y="440" class="label medium">Magnet</text>
+  </g>
+
+  <!-- Arrow -->
+  <g>
+    <line x1="760" y1="325" x2="700" y2="325" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+    <polygon points="700,325 724,312 724,338" fill="#f8fafc"/>
+    <text x="720" y="290" class="label medium">near</text>
+  </g>
+
+  <!-- Notes -->
+  <g>
+    <text x="760" y="520" class="label medium">Typical wiring</text>
+    <text x="760" y="565" class="label small">VCC - 5V</text>
+    <text x="760" y="600" class="label small">GND - GND</text>
+    <text x="760" y="635" class="label small">DO - Digital input</text>
+  </g>
+</svg>
