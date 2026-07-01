@@ -1,12 +1,11 @@
+# Hardware การเชื่อมต่อ  Arduino UNO R3 กับ Sensor 
+
 # DHT11
 
-```
-      DHT11
-   ┌─────────┐
-   │  ○ ○ ○ ○│
-   └─────────┘
-     │ │ │ │
-     1 2 3 4
-
-
 ขา 2 = DATA  → D4
+
+
+# LCD 16x2 
+A4 → I2C SDA
+A5 → I2C SCL
+address LCD คือ 0x27
