@@ -1,25 +1,49 @@
 #include <Arduino.h>
-
-#define LED_PIN     13    // Built-in LED (D13)
-#define BLINK_MS    500   // กระพริบทุก 500 ms
-
-unsigned long prevTime = 0;
-bool ledState = LOW;
+#include <Wire.h>
 
 void setup() {
-    Serial.begin(9600);
-    pinMode(LED_PIN, OUTPUT);
-    Serial.println("Blink Test Start");
+  Wire.begin();
+  Serial.begin(115200);
+  while (!Serial) {
+    ; // รอให้ Serial port พร้อมใช้งาน (จำเป็นสำหรับบอร์ดที่มี USB native เช่น Leonardo)
+  }
+  Serial.println("\nI2C Scanner");
 }
 
 void loop() {
-    unsigned long now = millis();
+  byte error, address;
+  int nDevices = 0;
 
-    if (now - prevTime >= BLINK_MS) {
-        prevTime = now;
-        ledState = !ledState;
-        digitalWrite(LED_PIN, ledState);
-        Serial.print("LED: ");
-        Serial.println(ledState ? "ON" : "OFF");
+  Serial.println("Scanning...");
+
+  for (address = 1; address < 127; address++) {
+    // Wire.beginTransmission() แล้วเช็ค error code เพื่อดูว่ามีอุปกรณ์ตอบรับที่ address นี้หรือไม่
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0) {
+      Serial.print("I2C device found at address 0x");
+      if (address < 16) {
+        Serial.print("0");
+      }
+      Serial.print(address, HEX);
+      Serial.println("  !");
+
+      nDevices++;
+    } else if (error == 4) {
+      Serial.print("Unknown error at address 0x");
+      if (address < 16) {
+        Serial.print("0");
+      }
+      Serial.println(address, HEX);
     }
+  }
+
+  if (nDevices == 0) {
+    Serial.println("No I2C devices found\n");
+  } else {
+    Serial.println("done\n");
+  }
+
+  delay(5000); // รอ 5 วินาทีก่อนสแกนรอบถัดไป
 }
