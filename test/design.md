@@ -2,7 +2,7 @@
 
 # DHT11
 
-ขา 2 = DATA  → D4
+ขา 2 = DATA  → D4     // A3 /D7 /D8
 
 
 # LCD 16x2 
